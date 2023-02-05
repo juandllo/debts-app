@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "debts-app",
-    "slug": "debts-app",
+    "name": "Deudas",
+    "slug": "Deudas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
