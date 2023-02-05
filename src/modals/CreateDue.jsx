@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { View, Text, Button, StyleSheet, SafeAreaView, TextInput, Alert } from 'react-native'
+import { endpoints } from '../helpers/http/endpoints'
+import { patchHttp } from '../helpers/http/fetchHelpers'
 
 export default function CreateDue({ route, navigation }) {
     const { debtor, debtId } = route.params
@@ -27,23 +29,16 @@ export default function CreateDue({ route, navigation }) {
             amount
         }
 
-        fetch(`https://debts-backend.herokuapp.com/api/v1/debtors/createDue/${debtor._id}/debt/${debtId}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if (response.status !== 200) {
-                Alert.alert('Se ha producido un error!')
-                return
-            }
+        patchHttp(`${endpoints.createDue}/${debtor._id}/debt/${debtId}`, body)
+            .then(response => {
+                if (response.status !== 200) {
+                    Alert.alert('Se ha producido un error!')
+                    return
+                }
 
-            return response.json()
-        }).then(response => {
-            Alert.alert('Se a pagado una cuota!')
-            navigation.goBack()
-        })
+                Alert.alert('Se a pagado una cuota!')
+                navigation.goBack()
+            })
     }
 
     return (

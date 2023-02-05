@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { View, Text, Button, StyleSheet, SafeAreaView, TextInput, Alert } from 'react-native'
+import { endpoints } from '../helpers/http/endpoints'
+import { patchHttp } from '../helpers/http/fetchHelpers'
 
 export default function CreateDebt({ route, navigation }) {
     const { debtor } = route.params
@@ -30,23 +32,16 @@ export default function CreateDebt({ route, navigation }) {
             status: true
         }
 
-        fetch(`https://debts-backend.herokuapp.com/api/v1/debtors/createDebt/${debtor._id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if (response.status !== 200) {
-                Alert.alert('Se ha producido un error!')
-                return
-            }
+        patchHttp(`${endpoints.createDebt}/${debtor._id}`, body)
+            .then(response => {
+                if (response.status !== 200) {
+                    Alert.alert('Se ha producido un error!')
+                    return
+                }
 
-            return response.json()
-        }).then(response => {
-            Alert.alert('El prestamo se ha almacenado!')
-            navigation.goBack()
-        })
+                Alert.alert('El préstamo se ha almacenado!')
+                navigation.goBack()
+            })
     }
 
     return (

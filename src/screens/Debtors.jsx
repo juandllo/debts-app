@@ -1,21 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, SafeAreaView, View, Button } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useFocusEffect } from '@react-navigation/native';
 import DebtorsList from '../components/DebtorsList';
+import { getHttp } from '../helpers/http/fetchHelpers';
+import { endpoints } from '../helpers/http/endpoints';
 
-export default function Home({ navigation }) {
+export default function Debtors({ navigation }) {
     const [debtors, setDebtors] = useState()
     const [isRefreshing, setIsRefreshing] = useState(false)
 
-    useEffect(() => {
-        handleUpdateList()
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            handleUpdateList()
+        }, [])
+    )
+
+    const openModal = () => {
+        navigation.navigate('CreateDebtor')
+    }
 
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <Button
-                    onPress={() => navigation.navigate('CreateDebtor')}
+                    onPress={openModal}
                     title="Nuevo"
                     color={'#f26008'}
                 />
@@ -31,10 +39,7 @@ export default function Home({ navigation }) {
 
     const handleUpdateList = () => {
         setIsRefreshing(true)
-        fetch('https://debts-backend.herokuapp.com/api/v1/debtors/getDebtors', {
-            method: 'GET'
-        })
-            .then(response => response.json())
+        getHttp(endpoints.getDebtors)
             .then(response => {
                 setDebtors(response.data)
                 setIsRefreshing(false)

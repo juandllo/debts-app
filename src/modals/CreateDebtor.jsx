@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { View, Text, Button, StyleSheet, SafeAreaView, TextInput, Alert } from 'react-native'
+import { endpoints } from '../helpers/http/endpoints'
+import { postHttp } from '../helpers/http/fetchHelpers'
 
 export default function CreateDebtor({ route, navigation }) {
 
@@ -28,23 +30,16 @@ export default function CreateDebtor({ route, navigation }) {
             status: true
         }
 
-        fetch('https://debts-backend.herokuapp.com/api/v1/debtors/addDebtor', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        }).then(response => {
-            if(response.status !== 200) {
-                Alert.alert('Se ha producido un error!')
-                return
-            }
+        postHttp(endpoints.addDebtor, body)
+            .then(response => {
+                if (response.status !== 200) {
+                    Alert.alert('Se ha producido un error!')
+                    return
+                }
 
-            return response.json()
-        }).then(response => {
-            Alert.alert('Se a creado el nuevo deudor!')
-            navigation.goBack()
-        })
+                Alert.alert('Se a creado el nuevo deudor!')
+                navigation.goBack()
+            })
     }
 
     return (

@@ -1,19 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, SafeAreaView, View, Alert, Button } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg'
 import DebtsList from '../components/DebtsList';
+import { endpoints } from '../helpers/http/endpoints'
+import { getHttp } from '../helpers/http/fetchHelpers';
 
 export default function Debtor({ route, navigation }) {
     const { debtor } = route.params
-    const [ debtorData, setDebtorData ] = useState(debtor)
+    const [debtorData, setDebtorData] = useState(debtor)
     const [isRefreshing, setIsRefreshing] = useState(false)
+
+    useFocusEffect(
+        useCallback(() => {
+            handleUpdateList()
+        }, [])
+    )
+
+    const openModal = () => {
+        navigation.navigate('CreateDebt', { debtor })
+    }
 
     useEffect(() => {
         navigation.setOptions({
             title: debtorData.name,
             headerRight: () => (
                 <Button
-                    onPress={() => navigation.navigate('CreateDebt', { debtor })}
+                    onPress={openModal}
                     title="Prestar"
                     color={'#f26008'}
                 />
@@ -31,10 +44,7 @@ export default function Debtor({ route, navigation }) {
     const handleUpdateList = () => {
         setIsRefreshing(true)
 
-        fetch(`https://debts-backend.herokuapp.com/api/v1/debtors/getDebtor/${debtorData._id}`, {
-            method: 'GET'
-        })
-            .then(response => response.json())
+        getHttp(`${endpoints.getDebtor}/${debtorData._id}`)
             .then(response => {
                 setDebtorData(response.data)
                 setIsRefreshing(false)

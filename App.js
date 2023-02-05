@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import Home from './src/screens/Home';
+import Debtors from './src/screens/Debtors';
 import Debtor from './src/screens/Debtor';
 import CreateDebtor from './src/modals/CreateDebtor';
 import CreateDebt from './src/modals/CreateDebt';
@@ -31,7 +31,7 @@ export default function App() {
                 }
             }}>
                 <Stack.Group>
-                    <Stack.Screen name="Deudores" component={Home} />
+                    <Stack.Screen name="Deudores" component={Debtors} />
                     <Stack.Screen name="Deudor" component={Debtor} />
                     <Stack.Screen name="DebtDetail" component={DebtDetails} />
                 </Stack.Group>

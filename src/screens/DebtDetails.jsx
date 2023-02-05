@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { StyleSheet, SafeAreaView, View, Text, Alert, Button } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useMaskCurrency } from '../hooks/maskCurrency';
 import DuesList from '../components/DuesList';
 import Header from '../components/Header';
+import { endpoints } from '../helpers/http/endpoints';
+import { getHttp } from '../helpers/http/fetchHelpers';
 
 export default function DebtDetails({ route, navigation }) {
 
@@ -12,12 +15,22 @@ export default function DebtDetails({ route, navigation }) {
     const [debtData, setDebtData] = useState(debt)
     const { setMask } = useMaskCurrency()
 
+    useFocusEffect(
+        useCallback(() => {
+            handleUpdateList()
+        }, [])
+    )
+
+    const openModal = () => {
+        navigation.navigate('CreateDue', { debtor, debtId: debtData._id })
+    }
+
     useEffect(() => {
         navigation.setOptions({
             title: debtData.name,
             headerRight: () => (
                 <Button
-                    onPress={() => navigation.navigate('CreateDue', { debtor, debtId: debtData._id })}
+                    onPress={() => openModal()}
                     title="Pagar"
                     color={'#f26008'} />
             )
@@ -55,10 +68,7 @@ export default function DebtDetails({ route, navigation }) {
     const handleUpdateList = () => {
         setIsRefreshing(true)
 
-        fetch(`https://debts-backend.herokuapp.com/api/v1/debtors/getDebtor/${debtorData._id}`, {
-            method: 'GET'
-        })
-            .then(response => response.json())
+        getHttp(`${endpoints.getDebtor}/${debtorData._id}`)
             .then(response => {
                 setDebtData(response.data.debts.find(item => item._id === debtData._id))
                 setIsRefreshing(false)
@@ -87,13 +97,13 @@ export default function DebtDetails({ route, navigation }) {
                     </Row>
                 </View>
                 <View style={styles.container}>
-                    { debtData.dues.length > 0
+                    {debtData.dues.length > 0
                         ?
                         <DuesList data={debtData.dues} handleClick={handleClick} handleUpdateList={handleUpdateList} isRefreshing={isRefreshing} />
                         :
                         <Header title={"No registra cuotas!"} />
                     }
-                    
+
                 </View>
             </View>
         </SafeAreaView>
