@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Deudas",
-    "slug": "Deudas",
+    "slug": "deudas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0ff5943d-1ec0-468c-b018-b4d93efe1261"
+      }
+    },
+    "owner": "juandllo"
   }
 }
